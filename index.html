@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>#box{width:1024px;height:758px;margin:0;padding:0}</style>
+</head>
+<body>
+<div id="box">
+  <!-- 同源代理地址，不再跨域 -->
+  <iframe src="/proxy" width="1024" height="758" frameborder="0"></iframe>
+</div>
+<script>
+window.onload = async ()=>{
+  // 等待4秒，留给日历动态数据加载
+  await new Promise(r=>setTimeout(r,4000));
+  const canvas = await html2canvas(document.getElementById("box"),{
+    useCORS:true,scale:1,width:1024,height:758
+  });
+  // 页面清空，只输出图片
+  document.body.innerHTML="";
+  const img = new Image();
+  img.src = canvas.toDataURL("image/png");
+  document.body.appendChild(img);
+}
+</script>
+</body>
+</html>
