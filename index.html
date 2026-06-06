@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+*{margin:0;padding:0}
+#wrap{width:1024px;height:758px}
+</style>
+</head>
+<body>
+<!-- iframe载入你的可画日历页面 -->
+<div id="wrap">
+<iframe src="https://hymmaker.my.canvasite.cn/" width="1024" height="758" frameborder="0"></iframe>
+</div>
+<script>
+(async()=>{
+  //等待页面加载+日历JS渲染完成，延时3秒适配动态农历/天气加载
+  await new Promise(s=>setTimeout(s,3000));
+  const dom = document.getElementById("wrap");
+  const canvas = await html2canvas(dom,{useCORS:true,scale:1});
+  //把canvas转成二进制PNG，用页面直接输出图片
+  const blob = await new Promise(res=>canvas.toBlob(res,"image/png"));
+  const reader = new FileReader();
+  reader.readAsArrayBuffer(blob);
+  reader.onload=()=>{
+    //页面返回二进制图片，浏览器直接显示PNG
+    document.body.innerHTML="";
+    const res = new Response(reader.result,{headers:{"Content-Type":"image/png"}});
+    res.blob().then(b=>{
+      const a = document.createElement("a");
+      a.href=URL.createObjectURL(b);
+      document.body.append(a);
+      a.click();
+    })
+  }
+})()
+</script>
+</body>
+</html>
